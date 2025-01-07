@@ -18,26 +18,25 @@ full_data <- read.csv("Data_full.csv", fileEncoding = "latin1")
 ymaze <-read.csv("updated_ymaze_with_boldness_group.csv")
 
 
-# Rename the levels of anxiety_group to "Bold" and "Shy"
-full_data$anxiety_group <- factor(full_data$anxiety_group, 
-                                  levels = c("Low Anxiety", "High Anxiety"),
-                                  labels = c("Bold", "Shy"))
+# Rename the levels of boldness_group to "Bold" and "Shy"
+full_data$boldness_group <- factor(full_data$boldness_group, 
+                                  levels = c("Bold", "Shy"))
 
 # Ensure Group is a factor with the correct levels
 full_data$Group <- factor(full_data$Group, levels = c("CTRL", "CAS"))
 
-# Check for any missing values and ensure anxiety_group is not NA
-full_data <- full_data %>% filter(!is.na(anxiety_group))
+# Check for any missing values and ensure boldness_group is not NA
+full_data <- full_data %>% filter(!is.na(boldness_group))
 
 # Custom colors for bars
 custom_colors <- c("Bold" =  "#00008B", "Shy" = "#FF8C00")
 lighter_dot_colors <- c("Bold" = "#4169E1", "Shy" = "#ffbb78")  # Lighter shades for individual points
 
 # Total Turns with individual points and mean + error bars
-total_turns_plot  <- ggplot(full_data, aes(x=Group, y=num_turns, fill=anxiety_group)) +
+total_turns_plot  <- ggplot(full_data, aes(x=Group, y=num_turns, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", position="dodge", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
-  geom_jitter(aes(color=anxiety_group), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.7), size=2) +  # Individual points
+  geom_jitter(aes(color=boldness_group), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.7), size=2) +  # Individual points
   scale_y_continuous(limits = c(0, 1000), breaks = seq(0, 1000, by = 100), expand = c(0, 0)) +  # Remove gap and set custom y-axis
   scale_fill_manual(values=custom_colors, guide = "none") +  # Remove legend for fill
   scale_color_manual(values=lighter_dot_colors, guide = "none") +  # Lighter individual points, no legend
@@ -45,10 +44,10 @@ total_turns_plot  <- ggplot(full_data, aes(x=Group, y=num_turns, fill=anxiety_gr
   theme_classic()
 
 # Alternations with individual points, custom y-axis scale, and mean + error bars
-alternations_plot <- ggplot(full_data, aes(x=Group, y=alternations, fill=anxiety_group)) +
+alternations_plot <- ggplot(full_data, aes(x=Group, y=alternations, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", position="dodge", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
-  geom_jitter(aes(color=anxiety_group), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.7), size=2) +  # Individual points
+  geom_jitter(aes(color=boldness_group), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.7), size=2) +  # Individual points
   scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10), expand = c(0, 0)) +  # Remove gap and set custom y-axis
   scale_fill_manual(values=custom_colors, guide = "none") +  # Remove legend for fill
   scale_color_manual(values=lighter_dot_colors, guide = "none") +  # Lighter individual points, no legend
@@ -57,10 +56,10 @@ alternations_plot <- ggplot(full_data, aes(x=Group, y=alternations, fill=anxiety
 
 
 # Repetitions with individual points, custom y-axis scale, and mean + error bars
-repetitions_plot <- ggplot(full_data, aes(x=Group, y=repetitions, fill=anxiety_group)) +
+repetitions_plot <- ggplot(full_data, aes(x=Group, y=repetitions, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", position="dodge", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
-  geom_jitter(aes(color=anxiety_group), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.7), size=2) +  # Individual points
+  geom_jitter(aes(color=boldness_group), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.7), size=2) +  # Individual points
   scale_y_continuous(limits = c(0, 15), breaks = seq(0, 15, by = 2.5), expand = c(0, 0)) +  # Remove gap and set custom y-axis
   scale_fill_manual(values=custom_colors, guide = "none") +  # Remove legend for fill
   scale_color_manual(values=lighter_dot_colors) +  # Lighter individual points, no legend
@@ -71,34 +70,34 @@ repetitions_plot <- ggplot(full_data, aes(x=Group, y=repetitions, fill=anxiety_g
 
 # Ensure the factors are correctly set
 full_data$Group <- factor(full_data$Group, levels = c("CTRL", "CAS"))
-full_data$anxiety_group <- factor(full_data$anxiety_group, levels = c("Bold", "Shy"))
-# Create an interaction term for Group and anxiety_group
-full_data$Group_Anxiety <- interaction(full_data$Group, full_data$anxiety_group)
+full_data$boldness_group <- factor(full_data$boldness_group, levels = c("Bold", "Shy"))
+# Create an interaction term for Group and boldness_group
+full_data$Group_boldness <- interaction(full_data$Group, full_data$boldness_group)
 
 # ANCOVA for Alternations
-ancova_alternations <- aov(alternations ~ anxiety_group * Group + num_turns, data = full_data)
+ancova_alternations <- aov(alternations ~ boldness_group * Group + num_turns, data = full_data)
 summary(ancova_alternations)
 
 # ANCOVA for Repetitions
-ancova_repetitions <- aov(repetitions ~ anxiety_group * Group + num_turns, data = full_data)
+ancova_repetitions <- aov(repetitions ~ boldness_group * Group + num_turns, data = full_data)
 summary(ancova_repetitions)
 
 # ANOVA for Total Turns
-anova_turns <- aov(num_turns ~ anxiety_group * Group, data = full_data)
+anova_turns <- aov(num_turns ~ boldness_group * Group, data = full_data)
 summary(anova_turns)
 
 # Post-hoc for ANCOVA on Alternations (no p-value adjustment)
-posthoc_alternations <- emmeans(ancova_alternations, pairwise ~ anxiety_group * Group, adjust = "none")
+posthoc_alternations <- emmeans(ancova_alternations, pairwise ~ boldness_group * Group, adjust = "none")
 summary(posthoc_alternations)
 confint(posthoc_alternations)
 
 # Post-hoc for ANCOVA on Repetitions (no p-value adjustment)
-posthoc_repetitions <- emmeans(ancova_repetitions, pairwise ~ anxiety_group * Group, adjust = "none")
+posthoc_repetitions <- emmeans(ancova_repetitions, pairwise ~ boldness_group * Group, adjust = "none")
 summary(posthoc_repetitions)
 confint(posthoc_repetitions)
 
 # Post-hoc for ANOVA on Total Turns (no p-value adjustment)
-posthoc_turns <- emmeans(anova_turns, pairwise ~ anxiety_group * Group, adjust = "none")
+posthoc_turns <- emmeans(anova_turns, pairwise ~ boldness_group * Group, adjust = "none")
 summary(posthoc_turns)
 confint(posthoc_turns)
 
@@ -118,7 +117,7 @@ custom_shapes <- c("Bold + CTRL" = 16,  # Circle
                    "Shy + CAS"   = 18)  # Inverted triangle
 
 # Create a new variable in the data to use these group labels
-ymaze$group_label <- interaction(ymaze$anxiety_group, ymaze$Group)
+ymaze$group_label <- interaction(ymaze$boldness_group, ymaze$Group)
 levels(ymaze$group_label) <- c("Bold + CTRL", "Bold + CAS", "Shy + CTRL", "Shy + CAS")
 
 # Step 1: Manually aggregate the data for mean and standard error (SE)
@@ -234,22 +233,22 @@ lighter_dot_colors <- c("Bold" = "#4169E1", "Shy" = "#ffbb78")  # Lighter shades
 # 1. Create simplified for Distance..m., Max.speed..m.s., Absolute.turn.angle...., and Small...mean.distance.from..m.
 
 # Distance Travelled plot (Distance..m.)
-distance_travelled_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Distance..m.`, fill=anxiety_group)) +
+distance_travelled_plot <- ggplot(full_data, aes(x=boldness_group, y=`Distance..m.`, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) +
-  geom_jitter(aes(color=anxiety_group), width=0.1, size=2) + 
-  labs(y="Distance Travelled (m)", title="Distance Travelled by Anxiety Group") +
+  geom_jitter(aes(color=boldness_group), width=0.1, size=2) + 
+  labs(y="Distance Travelled (m)", title="Distance Travelled by Boldness Group") +
   scale_fill_manual(values=custom_colors) +
   scale_color_manual(values=lighter_dot_colors) +
   theme_classic() + theme(legend.position = "none")  # Remove legend
 
 
 # Max Speed plot (Max.speed..m.s.)
-max_speed_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Max.speed..m.s.`, fill=anxiety_group)) +
+max_speed_plot <- ggplot(full_data, aes(x=boldness_group, y=`Max.speed..m.s.`, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) +
-  geom_jitter(aes(color=anxiety_group), width=0.1, size=2) + 
-  labs(y="Max Speed (m/s)", title="Max Speed by Anxiety Group") +
+  geom_jitter(aes(color=boldness_group), width=0.1, size=2) + 
+  labs(y="Max Speed (m/s)", title="Max Speed by Boldness Group") +
   scale_fill_manual(values=custom_colors) +
   scale_color_manual(values=lighter_dot_colors) +
   theme_classic() +   theme(legend.position = "none")  # Remove legend
@@ -257,11 +256,11 @@ max_speed_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Max.speed..m.s.`, fi
 # Load the scales package
 library(scales)
 # Absolute Turn Angle plot (Absolute.turn.angle....)
-turn_angle_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Absolute.turn.angle....`, fill=anxiety_group)) +
+turn_angle_plot <- ggplot(full_data, aes(x=boldness_group, y=`Absolute.turn.angle....`, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) +
-  geom_jitter(aes(color=anxiety_group), width=0.1, size=2) + 
-  labs(y="Absolute Turn Angle (°)", title="Absolute Turn Angle by Anxiety Group") +
+  geom_jitter(aes(color=boldness_group), width=0.1, size=2) + 
+  labs(y="Absolute Turn Angle (°)", title="Absolute Turn Angle by Boldness Group") +
   scale_fill_manual(values=custom_colors) +
   scale_color_manual(values=lighter_dot_colors) +
   scale_y_continuous(limits = c(0, 100000), breaks = seq(0, 100000, by = 20000), labels = label_number()) +  # Format y-axis labels as plain numbers
@@ -270,11 +269,11 @@ turn_angle_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Absolute.turn.angle
 
 
 # Distance from Bottom plot (Small...mean.distance.from..m.)
-distance_from_bottom_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Small...mean.distance.from..m.`, fill=anxiety_group)) +
+distance_from_bottom_plot <- ggplot(full_data, aes(x=boldness_group, y=`Small...mean.distance.from..m.`, fill=boldness_group)) +
   geom_bar(stat="summary", fun="mean", width=0.7) +
   stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) +
-  geom_jitter(aes(color=anxiety_group), width=0.1, size=2) + 
-  labs(y="Distance from Bottom (m)", title="Distance from Bottom by Anxiety Group") +
+  geom_jitter(aes(color=boldness_group), width=0.1, size=2) + 
+  labs(y="Distance from Bottom (m)", title="Distance from Bottom by Boldness Group") +
   scale_fill_manual(values=custom_colors) +
   scale_color_manual(values=lighter_dot_colors) +
   scale_y_continuous(limits = c(0, 0.1), breaks = seq(0, 0.1, by = 0.02)) +  # Manually scale y-axis
@@ -282,22 +281,22 @@ distance_from_bottom_plot <- ggplot(full_data, aes(x=anxiety_group, y=`Small...m
   theme(legend.position = "none")  # Remove legend
 
 
-# 2. Perform T-tests between Low Anxiety and High Anxiety groups
+# 2. Perform T-tests between Low boldness and High Boldness Groups
 
 # Distance Travelled T-test (Student's t-test)
-t_test_distance_travelled <- t.test(`Distance..m.` ~ anxiety_group, data = full_data, var.equal = TRUE)
+t_test_distance_travelled <- t.test(`Distance..m.` ~ boldness_group, data = full_data, var.equal = TRUE)
 print(t_test_distance_travelled)
 
 # Max Speed T-test (Student's t-test)
-t_test_max_speed <- t.test(`Max.speed..m.s.` ~ anxiety_group, data = full_data, var.equal = TRUE)
+t_test_max_speed <- t.test(`Max.speed..m.s.` ~ boldness_group, data = full_data, var.equal = TRUE)
 print(t_test_max_speed)
 
 # Absolute Turn Angle T-test (Student's t-test)
-t_test_turn_angle <- t.test(`Absolute.turn.angle....` ~ anxiety_group, data = full_data, var.equal = TRUE)
+t_test_turn_angle <- t.test(`Absolute.turn.angle....` ~ boldness_group, data = full_data, var.equal = TRUE)
 print(t_test_turn_angle)
 
 # Distance from Bottom T-test (Student's t-test)
-t_test_distance_from_bottom <- t.test(`Small...mean.distance.from..m.` ~ anxiety_group, data = full_data, var.equal = TRUE)
+t_test_distance_from_bottom <- t.test(`Small...mean.distance.from..m.` ~ boldness_group, data = full_data, var.equal = TRUE)
 print(t_test_distance_from_bottom)
 
 
@@ -316,30 +315,30 @@ ggsave("grid_boldness.pdf", plot = grid_plot, width = 12, height = 10)
 ####################################TETRAGRAMS####################################################
 
 # Adjust this based on the actual column names
-# Assuming 'Group' and 'anxiety_group' are present and the columns 18-33 are your tetragrams
-# Ensure Group and anxiety_group are treated as factors
+# Assuming 'Group' and 'boldness_group' are present and the columns 18-33 are your tetragrams
+# Ensure Group and boldness_group are treated as factors
 full_data$Group <- factor(full_data$Group)
-full_data$anxiety_group <- factor(full_data$anxiety_group)
+full_data$boldness_group <- factor(full_data$boldness_group)
 
 # Custom colors for Bold and Shy
 custom_colors <- c("Bold" =  "#00008B", "Shy" = "#FF8C00")
 
-# Extract only columns 18 to 33 for tetragrams along with Group and anxiety_group
-tetragram_data <- full_data[, c(36, 38, 18:33)]
+# Extract only columns 18 to 33 for tetragrams along with Group and boldness_group
+tetragram_data <- full_data[, c(36, 37, 18:33)]
 
 # Melt the data for easier plotting
-tetragram_data_melted <- melt(tetragram_data, id.vars = c("Group", "anxiety_group"))
+tetragram_data_melted <- melt(tetragram_data, id.vars = c("Group", "boldness_group"))
 
-# Calculate mean and standard error for each tetragram, Group, and anxiety_group
+# Calculate mean and standard error for each tetragram, Group, and boldness_group
 tetragram_summary <- tetragram_data_melted %>%
-  group_by(Group, anxiety_group, variable) %>%
+  group_by(Group, boldness_group, variable) %>%
   summarize(
     mean_value = mean(value, na.rm = TRUE),
     se_value = sd(value, na.rm = TRUE) / sqrt(n())
   )
 
-# Plot the tetragrams for Ctrl and CAS, separated by anxiety group with mean and error bars
-tetragram_plot <- ggplot(tetragram_summary, aes(x=variable, y=mean_value, fill=anxiety_group)) +
+# Plot the tetragrams for Ctrl and CAS, separated by Boldness Group with mean and error bars
+tetragram_plot <- ggplot(tetragram_summary, aes(x=variable, y=mean_value, fill=boldness_group)) +
   geom_bar(stat="identity", position="dodge", width=0.7) +
   geom_errorbar(aes(ymin = mean_value - se_value, ymax = mean_value + se_value), 
                 position=position_dodge(0.7), width=0.2) +
@@ -359,26 +358,26 @@ ctrl_data <- subset(tetragram_data_melted, Group == "CTRL")
 cas_data <- subset(tetragram_data_melted, Group == "CAS")
 
 # Step 2: Run Two-Way ANOVA for CTRL group (with interaction term)
-anova_ctrl <- aov(value ~ anxiety_group * variable, data = ctrl_data)
+anova_ctrl <- aov(value ~ boldness_group * variable, data = ctrl_data)
 summary(anova_ctrl)
 
 # Step 3: Post hoc test for CTRL group (specific comparisons for each tetragram)
-posthoc_ctrl <- emmeans(anova_ctrl, pairwise ~ anxiety_group | variable)
+posthoc_ctrl <- emmeans(anova_ctrl, pairwise ~ boldness_group | variable)
 summary(posthoc_ctrl)
 
 # Step 4: Run Two-Way ANOVA for CAS group (with interaction term)
-anova_cas <- aov(value ~ anxiety_group * variable, data = cas_data)
+anova_cas <- aov(value ~ boldness_group * variable, data = cas_data)
 summary(anova_cas)
 
 # Step 5: Post hoc test for CAS group (specific comparisons for each tetragram)
-posthoc_cas <- emmeans(anova_cas, pairwise ~ anxiety_group | variable)
+posthoc_cas <- emmeans(anova_cas, pairwise ~ boldness_group | variable)
 summary(posthoc_cas)
 
 
 
 ######################SCATTER PLOT#######################################
-## Assuming you have a column named 'anxiety_index' in your dataset
-full_data$boldness_index <- 1 - full_data$anxiety_index
+## Assuming you have a column named 'boldness_index' in your dataset
+full_data$boldness_index <- 1 - full_data$boldness_index
 
 # Ensure Sex is a factor
 full_data$Sex <- factor(full_data$Sex, levels = c("F", "M"))
@@ -387,10 +386,10 @@ full_data$Sex <- factor(full_data$Sex, levels = c("F", "M"))
 cutoff_value <- median(full_data$boldness_index)  # You can modify this based on your experiment
 
 # Scatter plot for the boldness index with different shapes for females and males
-boldness_index_plot <- ggplot(full_data, aes(x = anxiety_group, y = boldness_index, color = anxiety_group, shape = Sex)) +
+boldness_index_plot <- ggplot(full_data, aes(x = boldness_group, y = boldness_index, color = boldness_group, shape = Sex)) +
   geom_point(position = position_jitter(width = 0.45), size = 5, alpha = 0.7) +  # Add jitter for visibility
   geom_hline(yintercept = cutoff_value, linetype = "dashed", color = "grey", size = 1) +  # Add cutoff line
-  labs(title = "Distribution of Boldness Index", y = "Boldness Index", x = "Anxiety Group") +
+  labs(title = "Distribution of Boldness Index", y = "Boldness Index", x = "Boldness Group") +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +  # Set y-axis from 0 to 1 with intervals of 0.2
   scale_color_manual(values = custom_colors) +  # Apply custom colors
   scale_shape_manual(values = c("F" = 16, "M" = 17)) +  # Different shapes: circles for females, triangles for males
@@ -405,9 +404,9 @@ ggsave("boldnessindex_plot.pdf", plot = boldness_index_plot, width = 8, height =
 
 
 ##################################SEX#######################################
-# Count the number of observations by Sex and Anxiety Group
+# Count the number of observations by Sex and Boldness Group
 n_counts <- full_data %>%
-  group_by(Sex, anxiety_group) %>%
+  group_by(Sex, boldness_group) %>%
   summarise(n = n())
 
 # Print the counts
@@ -418,33 +417,33 @@ fill_colors <- c("F" = "#4B0082", "M" = "#006400")  # Dark purple for female, da
 dot_colors <- c("F" = "#9370DB", "M" = "#32CD32")   # Lighter purple for female, lighter green for male
 
 # Distance Traveled plot (0 to 30 by 5)
-distance_travelled_plot_sex_anxiety <- ggplot(full_data, aes(x=anxiety_group, y=`Distance..m.`, fill=Sex)) +
+distance_travelled_plot_sex_boldness <- ggplot(full_data, aes(x=boldness_group, y=`Distance..m.`, fill=Sex)) +
   geom_bar(stat="summary", fun="mean", position=position_dodge(width=0.7), width=0.6) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
   geom_jitter(aes(color=Sex), position=position_jitterdodge(jitter.width=0.3, dodge.width=0.7), size=2) + 
-  labs(y="Distance Travelled (m)", x="Anxiety Group (Bold/Shy)", title="Distance Travelled by Sex and Anxiety Group") +
+  labs(y="Distance Travelled (m)", x="Boldness Group (Bold/Shy)", title="Distance Travelled by Sex and Boldness Group") +
   scale_fill_manual(values=fill_colors) +  
   scale_color_manual(values=dot_colors) +  
   scale_y_continuous(limits = c(0, 30), breaks = seq(0, 30, 5), expand = c(0, 0)) +  # Set scale from 0 to 30 by 5
   theme_classic()
 
 # Max Speed plot (0.00 to 0.20 by 0.05)
-max_speed_plot_sex_anxiety <- ggplot(full_data, aes(x=anxiety_group, y=`Max.speed..m.s.`, fill=Sex)) +
+max_speed_plot_sex_boldness <- ggplot(full_data, aes(x=boldness_group, y=`Max.speed..m.s.`, fill=Sex)) +
   geom_bar(stat="summary", fun="mean", position=position_dodge(width=0.7), width=0.6) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
   geom_jitter(aes(color=Sex), position=position_jitterdodge(jitter.width=0.3, dodge.width=0.7), size=2) + 
-  labs(y="Max Speed (m/s)", x="Anxiety Group (Bold/Shy)", title="Max Speed by Sex and Anxiety Group") +
+  labs(y="Max Speed (m/s)", x="Boldness Group (Bold/Shy)", title="Max Speed by Sex and Boldness Group") +
   scale_fill_manual(values=fill_colors) +  
   scale_color_manual(values=dot_colors) +  
   scale_y_continuous(limits = c(0.00, 0.20), breaks = seq(0.00, 0.20, 0.05), expand = c(0, 0)) +  # Set scale from 0.00 to 0.20 by 0.05
   theme_classic()
 
 # Absolute Turn Angle plot (0 to 100000 by 20000, with standard number formatting)
-turn_angle_plot_sex_anxiety <- ggplot(full_data, aes(x=anxiety_group, y=`Absolute.turn.angle....`, fill=Sex)) +
+turn_angle_plot_sex_boldness <- ggplot(full_data, aes(x=boldness_group, y=`Absolute.turn.angle....`, fill=Sex)) +
   geom_bar(stat="summary", fun="mean", position=position_dodge(width=0.7), width=0.6) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
   geom_jitter(aes(color=Sex), position=position_jitterdodge(jitter.width=0.3, dodge.width=0.7), size=2) + 
-  labs(y="Absolute Turn Angle (degrees)", x="Anxiety Group (Bold/Shy)", title="Absolute Turn Angle by Sex and Anxiety Group") +
+  labs(y="Absolute Turn Angle (degrees)", x="Boldness Group (Bold/Shy)", title="Absolute Turn Angle by Sex and Boldness Group") +
   scale_fill_manual(values=fill_colors) +  
   scale_color_manual(values=dot_colors) +  
   scale_y_continuous(limits = c(0, 100000), breaks = seq(0, 100000, 20000), labels = scales::comma, expand = c(0, 0)) +  # Use comma notation for y-axis labels
@@ -452,11 +451,11 @@ turn_angle_plot_sex_anxiety <- ggplot(full_data, aes(x=anxiety_group, y=`Absolut
 
 
 # Distance from Bottom plot (0.00 to 0.10 by 0.02)
-distance_from_bottom_plot_sex_anxiety <- ggplot(full_data, aes(x=anxiety_group, y=`Small...mean.distance.from..m.`, fill=Sex)) +
+distance_from_bottom_plot_sex_boldness <- ggplot(full_data, aes(x=boldness_group, y=`Small...mean.distance.from..m.`, fill=Sex)) +
   geom_bar(stat="summary", fun="mean", position=position_dodge(width=0.7), width=0.6) +
   stat_summary(fun.data=mean_se, geom="errorbar", position=position_dodge(0.7), width=0.2) +
   geom_jitter(aes(color=Sex), position=position_jitterdodge(jitter.width=0.3, dodge.width=0.7), size=2) + 
-  labs(y="Distance from Bottom (m)", x="Anxiety Group (Bold/Shy)", title="Distance from Bottom by Sex and Anxiety Group") +
+  labs(y="Distance from Bottom (m)", x="Boldness Group (Bold/Shy)", title="Distance from Bottom by Sex and boldness Group") +
   scale_fill_manual(values=fill_colors) +  
   scale_color_manual(values=dot_colors) +  
   scale_y_continuous(limits = c(0.00, 0.10), breaks = seq(0.00, 0.10, 0.02), expand = c(0, 0)) +  # Set scale from 0.00 to 0.10 by 0.02
@@ -464,10 +463,10 @@ distance_from_bottom_plot_sex_anxiety <- ggplot(full_data, aes(x=anxiety_group, 
 
 
 # Arrange all plots in a 2x2 grid
-sex_grid <- grid.arrange(distance_travelled_plot_sex_anxiety, 
-             max_speed_plot_sex_anxiety, 
-             turn_angle_plot_sex_anxiety, 
-             distance_from_bottom_plot_sex_anxiety, 
+sex_grid <- grid.arrange(distance_travelled_plot_sex_boldness, 
+             max_speed_plot_sex_boldness, 
+             turn_angle_plot_sex_boldness, 
+             distance_from_bottom_plot_sex_boldness, 
              ncol = 2, nrow = 2)
 
 ggsave("sexgrid.pdf", plot = sex_grid, width = 12, height = 8)
@@ -492,17 +491,17 @@ t_test_result <- t.test(boldness_index ~ Sex, data = full_data, var.equal = TRUE
 # Print the t-test results
 print(t_test_result)
 
-# ANOVA for Distance from Bottom with Sex and Anxiety Group
-anova_distance_bottom_sex_anxiety <- aov(`Small...mean.distance.from..m.` ~ anxiety_group * Sex, data = full_data)
-summary(anova_distance_bottom_sex_anxiety)
+# ANOVA for Distance from Bottom with Sex and boldness Group
+anova_distance_bottom_sex_boldness <- aov(`Small...mean.distance.from..m.` ~ boldness_group * Sex, data = full_data)
+summary(anova_distance_bottom_sex_boldness)
 
 # Post-hoc for Distance from Bottom
-posthoc_distance_bottom <- emmeans(anova_distance_bottom_sex_anxiety, pairwise ~ anxiety_group * Sex, adjust = "none")
+posthoc_distance_bottom <- emmeans(anova_distance_bottom_sex_boldness, pairwise ~ boldness_group * Sex, adjust = "none")
 summary(posthoc_distance_bottom)
 
 ###################REPRESENTATION
 # Repetitions vs Alternations with shapes for CAS and CTRL
-repetitions_vs_alternations <- ggplot(full_data, aes(x = alternations, y = repetitions, color = anxiety_group, shape = Group)) +
+repetitions_vs_alternations <- ggplot(full_data, aes(x = alternations, y = repetitions, color = boldness_group, shape = Group)) +
   geom_point(size = 3, alpha = 0.7) +
   labs(title = "Alternations vs Repetitions", x = "Alternations", y = "Repetitions") +
   scale_color_manual(values = custom_colors) +
@@ -516,7 +515,7 @@ print(repetitions_vs_alternations)
 ggsave("Repetitions_vs_Alternations.pdf", plot = repetitions_vs_alternations, width = 8, height = 6)
 
 # Boldness Index vs Alternations with shapes for CAS and CTRL
-boldness_vs_alternations <- ggplot(full_data, aes(x = boldness_index, y = alternations, color = anxiety_group, shape = Group)) +
+boldness_vs_alternations <- ggplot(full_data, aes(x = boldness_index, y = alternations, color = boldness_group, shape = Group)) +
   geom_point(size = 3, alpha = 0.7) +
   labs(title = "Boldness Index vs Alternations", x = "Boldness Index", y = "Alternations") +
   scale_color_manual(values = custom_colors) +
@@ -524,7 +523,7 @@ boldness_vs_alternations <- ggplot(full_data, aes(x = boldness_index, y = altern
   theme_classic()
 
 # Boldness Index vs Repetitions with shapes for CAS and CTRL
-boldness_vs_repetitions <- ggplot(full_data, aes(x = boldness_index, y = repetitions, color = anxiety_group, shape = Group)) +
+boldness_vs_repetitions <- ggplot(full_data, aes(x = boldness_index, y = repetitions, color = boldness_group, shape = Group)) +
   geom_point(size = 3, alpha = 0.7) +
   labs(title = "Boldness Index vs Repetitions", x = "Boldness Index", y = "Repetitions") +
   scale_color_manual(values = custom_colors) +
