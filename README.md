@@ -1,1 +1,3 @@
 # Boldness_WorkingMemory_Zebrafish
+
+This repository contains the data and analysis scripts for the manuscript titled "Individual differences in boldness influence working memory and stress-induced repetitive behaviors in zebrafish". The study explores how individual differences in boldness impact stress reactivity, cognitive performance, and repetitive behaviors in zebrafish (Danio rerio). By linking boldness to specific behavioral and cognitive outcomes, this research contributes to the understanding of resilience, impulsivity, and repetitive behaviors in a translational neurobehavioral context.
