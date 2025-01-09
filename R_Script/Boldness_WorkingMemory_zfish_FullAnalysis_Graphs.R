@@ -377,8 +377,6 @@ summary(posthoc_cas)
 
 ######################SCATTER PLOT#######################################
 ## Assuming you have a column named 'boldness_index' in your dataset
-full_data$boldness_index <- 1 - full_data$boldness_index
-
 # Ensure Sex is a factor
 full_data$Sex <- factor(full_data$Sex, levels = c("F", "M"))
 
